@@ -23,6 +23,8 @@ contract SmartInvoice {
         _;
     }
     // Events
+    event CreateInvoice(address indexed client, string description, uint256 amount);
+    event PayInvoice(uint256 indexed idClient);
 
     // Constructor
     constructor() {
@@ -48,6 +50,8 @@ contract SmartInvoice {
         );
         invoices[invoiceCount] = newInvoice;
         invoiceCount++;
+
+        emit CreateInvoice(client_, description_, amount_);
     }
 
     function payInvoice(uint256 id_) public payable {
@@ -55,6 +59,8 @@ contract SmartInvoice {
         require(invoices[id_].paid == false, "Invoice already paid");
 
         invoices[id_].paid = true;
+
+        emit PayInvoice(id_);
     }
 
     function getInvoice(uint256 id_) public view returns (Invoice memory) {
