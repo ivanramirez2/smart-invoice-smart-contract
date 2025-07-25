@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-only
 
+// Solidity version
 pragma solidity 0.8.24;
 
 contract SmartInvoice {
@@ -16,6 +17,13 @@ contract SmartInvoice {
     uint256 public invoiceCount;
     mapping(uint256 => Invoice) private invoices;
 
+    // Modifiers
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not the owner");
+        _;
+    }
+    // Events
+
     // Constructor
     constructor() {
         owner = msg.sender;
@@ -27,7 +35,7 @@ contract SmartInvoice {
         address client_,
         string memory description_,
         uint256 amount_
-    ) public {
+    ) public onlyOwner {
         require(client_ != address(0), "Invalid client address");
         require(amount_ > 0, "Amount must be greater than 0");
 
@@ -45,7 +53,6 @@ contract SmartInvoice {
     function payInvoice(uint256 id_) public payable {
         require(id_ < invoiceCount, "Invoice does not exist");
         require(invoices[id_].paid == false, "Invoice already paid");
-        require(msg.value == invoices[id_].amount, "Incorrect payment amount");
 
         invoices[id_].paid = true;
     }
