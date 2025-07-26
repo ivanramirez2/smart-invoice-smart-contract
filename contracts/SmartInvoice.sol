@@ -3,7 +3,9 @@
 // Solidity version
 pragma solidity 0.8.24;
 
-contract SmartInvoice {
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract SmartInvoice is Ownable {
     // State Variables
     struct Invoice {
         uint256 id;
@@ -13,22 +15,21 @@ contract SmartInvoice {
         bool paid;
     }
 
-    address public owner;
+    
     uint256 public invoiceCount;
     mapping(uint256 => Invoice) private invoices;
 
     // Modifiers
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Not the owner");
-        _;
-    }
+    
     // Events
+    
     event CreateInvoice(address indexed client, string description, uint256 amount);
+
     event PayInvoice(uint256 indexed idClient);
 
     // Constructor
-    constructor() {
-        owner = msg.sender;
+    constructor() Ownable(msg.sender) {
+       
     }
 
     // External Functions
